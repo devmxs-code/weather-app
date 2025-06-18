@@ -24,6 +24,7 @@ import {
   WiNightClear,
   WiHumidity
 } from 'weather-icons-react';
+import './App.css'; // Importa o arquivo CSS
 
 // Animations
 const fadeIn = keyframes`
