@@ -8,7 +8,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const fetchWeather = async () => {
+  const fetchWeather = React.useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -46,11 +46,11 @@ function App() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [city]);
 
   useEffect(() => {
     fetchWeather();
-  }, []);
+  }, [fetchWeather]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
