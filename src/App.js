@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import styled, { keyframes, ThemeProvider } from 'styled-components';
+import styled, { keyframes, ThemeProvider, createGlobalStyle } from 'styled-components';
 import { 
   FiSearch, 
   FiMapPin, 
@@ -71,6 +71,21 @@ const darkTheme = {
     sm: '576px', // Adicionado breakpoint para telas pequenas
   },
 };
+
+// Estilo global para aplicar o fundo ao body
+const GlobalStyle = createGlobalStyle`
+  body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    width: 100vw;
+    background-color: ${(props) => props.theme.colors.background};
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+`;
 
 // Styled Components
 const AppContainer = styled.div`
@@ -668,152 +683,155 @@ function App() {
 
   return (
     <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
-      <AppContainer>
-        <Header>
-          <Title>Previsão do Tempo</Title>
-          <Subtitle>Obtenha informações meteorológicas em tempo real para qualquer cidade do mundo</Subtitle>
-        </Header>
+      <>
+        <GlobalStyle /> {/* Aplica o estilo global */}
+        <AppContainer>
+          <Header>
+            <Title>Previsão do Tempo</Title>
+            <Subtitle>Obtenha informações meteorológicas em tempo real para qualquer cidade do mundo</Subtitle>
+          </Header>
 
-        <ThemeToggle onClick={handleThemeToggle}>
-          {darkMode ? <FiSunIcon size={20} /> : <FiMoon size={20} />}
-          Alternar para {darkMode ? 'Modo Claro' : 'Modo Escuro'}
-        </ThemeToggle>
+          <ThemeToggle onClick={handleThemeToggle}>
+            {darkMode ? <FiSunIcon size={20} /> : <FiMoon size={20} />}
+            Alternar para {darkMode ? 'Modo Claro' : 'Modo Escuro'}
+          </ThemeToggle>
 
-        <UnitToggle>
-          <button 
-            className={unit === 'celsius' ? 'active' : ''} 
-            onClick={() => setUnit('celsius')}
-          >
-            °C
-          </button>
-          <button 
-            className={unit === 'fahrenheit' ? 'active' : ''} 
-            onClick={() => setUnit('fahrenheit')}
-          >
-            °F
-          </button>
-        </UnitToggle>
+          <UnitToggle>
+            <button 
+              className={unit === 'celsius' ? 'active' : ''} 
+              onClick={() => setUnit('celsius')}
+            >
+              °C
+            </button>
+            <button 
+              className={unit === 'fahrenheit' ? 'active' : ''} 
+              onClick={() => setUnit('fahrenheit')}
+            >
+              °F
+            </button>
+          </UnitToggle>
 
-        <SearchForm onSubmit={handleSubmit}>
-          <SearchInput
-            type="text"
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
-            placeholder="Digite o nome da cidade (ex: Rio de Janeiro, Nova York)"
-          />
-          <SearchButton type="submit" disabled={loading}>
-            <FiSearch /> {loading ? 'Buscando...' : 'Buscar'}
-          </SearchButton>
-        </SearchForm>
+          <SearchForm onSubmit={handleSubmit}>
+            <SearchInput
+              type="text"
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              placeholder="Digite o nome da cidade (ex: Rio de Janeiro, Nova York)"
+            />
+            <SearchButton type="submit" disabled={loading}>
+              <FiSearch /> {loading ? 'Buscando...' : 'Buscar'}
+            </SearchButton>
+          </SearchForm>
 
-        {loading && (
-          <Loading>
-            <FiRefreshCw size={24} />
-            Carregando dados meteorológicos...
-          </Loading>
-        )}
-        
-        {error && (
-          <ErrorMessage>
-            <FiAlertCircle size={18} />
-            {error}
-          </ErrorMessage>
-        )}
+          {loading && (
+            <Loading>
+              <FiRefreshCw size={24} />
+              Carregando dados meteorológicos...
+            </Loading>
+          )}
+          
+          {error && (
+            <ErrorMessage>
+              <FiAlertCircle size={18} />
+              {error}
+            </ErrorMessage>
+          )}
 
-        {weather && (
-          <>
-            <WeatherCard>
-              <Location>
-                <FiMapPin size={24} />
-                <h2>{weather.city}, {weather.country}</h2>
-              </Location>
+          {weather && (
+            <>
+              <WeatherCard>
+                <Location>
+                  <FiMapPin size={24} />
+                  <h2>{weather.city}, {weather.country}</h2>
+                </Location>
 
-              <CurrentWeather>
-                <WeatherIcon>
-                  {getWeatherIcon(weather.current.weathercode)}
-                </WeatherIcon>
-                <Temperature>
-                  {convertTemp(weather.current.temperature)}<span>°{unit === 'celsius' ? 'C' : 'F'}</span>
-                </Temperature>
-                <WeatherDescription>
-                  {getWeatherDescription(weather.current.weathercode)}
-                </WeatherDescription>
-              </CurrentWeather>
+                <CurrentWeather>
+                  <WeatherIcon>
+                    {getWeatherIcon(weather.current.weathercode)}
+                  </WeatherIcon>
+                  <Temperature>
+                    {convertTemp(weather.current.temperature)}<span>°{unit === 'celsius' ? 'C' : 'F'}</span>
+                  </Temperature>
+                  <WeatherDescription>
+                    {getWeatherDescription(weather.current.weathercode)}
+                  </WeatherDescription>
+                </CurrentWeather>
 
-              <WeatherDetails>
-                <DetailItem>
-                  <FiDroplet size={20} />
-                  <div>
-                    <div>Umidade</div>
-                    <div>{weather.current.humidity}%</div>
-                  </div>
-                </DetailItem>
-                <DetailItem>
-                  <FiWind size={20} />
-                  <div>
-                    <div>Vento</div>
-                    <div>{weather.current.windspeed} km/h</div>
-                  </div>
-                </DetailItem>
-                <DetailItem>
-                  <WiHumidity size={20} />
-                  <div>
-                    <div>Precipitação</div>
-                    <div>{weather.current.precipitation} mm</div>
-                  </div>
-                </DetailItem>
-                <DetailItem>
-                  <FiSun size={20} />
-                  <div>
-                    <div>Nascer do sol</div>
-                    <div>{formatTime(weather.today.sunrise)}</div>
-                  </div>
-                </DetailItem>
-                <DetailItem>
-                  <FiSun size={20} style={{ transform: 'rotate(180deg)' }} />
-                  <div>
-                    <div>Pôr do sol</div>
-                    <div>{formatTime(weather.today.sunset)}</div>
-                  </div>
-                </DetailItem>
-                <DetailItem>
-                  <FiClock size={20} />
-                  <div>
-                    <div>Atualizado</div>
-                    <div>{lastUpdated && lastUpdated.toLocaleTimeString('pt-BR')}</div>
-                  </div>
-                </DetailItem>
-              </WeatherDetails>
-            </WeatherCard>
+                <WeatherDetails>
+                  <DetailItem>
+                    <FiDroplet size={20} />
+                    <div>
+                      <div>Umidade</div>
+                      <div>{weather.current.humidity}%</div>
+                    </div>
+                  </DetailItem>
+                  <DetailItem>
+                    <FiWind size={20} />
+                    <div>
+                      <div>Vento</div>
+                      <div>{weather.current.windspeed} km/h</div>
+                    </div>
+                  </DetailItem>
+                  <DetailItem>
+                    <WiHumidity size={20} />
+                    <div>
+                      <div>Precipitação</div>
+                      <div>{weather.current.precipitation} mm</div>
+                    </div>
+                  </DetailItem>
+                  <DetailItem>
+                    <FiSun size={20} />
+                    <div>
+                      <div>Nascer do sol</div>
+                      <div>{formatTime(weather.today.sunrise)}</div>
+                    </div>
+                  </DetailItem>
+                  <DetailItem>
+                    <FiSun size={20} style={{ transform: 'rotate(180deg)' }} />
+                    <div>
+                      <div>Pôr do sol</div>
+                      <div>{formatTime(weather.today.sunset)}</div>
+                    </div>
+                  </DetailItem>
+                  <DetailItem>
+                    <FiClock size={20} />
+                    <div>
+                      <div>Atualizado</div>
+                      <div>{lastUpdated && lastUpdated.toLocaleTimeString('pt-BR')}</div>
+                    </div>
+                  </DetailItem>
+                </WeatherDetails>
+              </WeatherCard>
 
-            {forecast && (
-              <ForecastContainer>
-                <ForecastTitle>
-                  Previsão para os próximos dias
-                  <RefreshButton onClick={handleRefresh}>
-                    <FiRefreshCw size={16} />
-                    Atualizar
-                  </RefreshButton>
-                </ForecastTitle>
-                <ForecastList>
-                  {forecast.map((day, index) => (
-                    <ForecastItem key={index}>
-                      <div>{day.day}</div>
-                      <div>{getWeatherIcon(day.weathercode)}</div>
-                      <div>
-                        {convertTemp(day.temp_max)}° / {convertTemp(day.temp_min)}°
-                      </div>
-                      <div>
-                        ☀️ {formatTime(day.sunrise)} / 🌙 {formatTime(day.sunset)}
-                      </div>
-                    </ForecastItem>
-                  ))}
-                </ForecastList>
-              </ForecastContainer>
-            )}
-          </>
-        )}
-      </AppContainer>
+              {forecast && (
+                <ForecastContainer>
+                  <ForecastTitle>
+                    Previsão para os próximos dias
+                    <RefreshButton onClick={handleRefresh}>
+                      <FiRefreshCw size={16} />
+                      Atualizar
+                    </RefreshButton>
+                  </ForecastTitle>
+                  <ForecastList>
+                    {forecast.map((day, index) => (
+                      <ForecastItem key={index}>
+                        <div>{day.day}</div>
+                        <div>{getWeatherIcon(day.weathercode)}</div>
+                        <div>
+                          {convertTemp(day.temp_max)}° / {convertTemp(day.temp_min)}°
+                        </div>
+                        <div>
+                          ☀️ {formatTime(day.sunrise)} / 🌙 {formatTime(day.sunset)}
+                        </div>
+                      </ForecastItem>
+                    ))}
+                  </ForecastList>
+                </ForecastContainer>
+              )}
+            </>
+          )}
+        </AppContainer>
+      </>
     </ThemeProvider>
   );
 }
