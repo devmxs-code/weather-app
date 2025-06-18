@@ -82,14 +82,18 @@ const AppContainer = styled.div`
   min-height: 100vh;
   box-sizing: border-box;
 
-  @media (min-width: 576px) {
-    padding: 2rem;
+  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
+    padding: 1rem;
   }
 `;
 
 const Header = styled.header`
   text-align: center;
   margin-bottom: 2rem;
+
+  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
+    margin-bottom: 1rem;
+  }
 `;
 
 const Title = styled.h1`
@@ -97,6 +101,10 @@ const Title = styled.h1`
   color: ${(props) => props.theme.colors.primary};
   margin-bottom: 0.5rem;
   font-weight: 600;
+
+  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
+    font-size: 2rem;
+  }
 `;
 
 const Subtitle = styled.p`
@@ -104,6 +112,10 @@ const Subtitle = styled.p`
   font-size: 1rem;
   max-width: 600px;
   margin: 0 auto;
+
+  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
+    font-size: 0.9rem;
+  }
 `;
 
 const ThemeToggle = styled.button`
@@ -139,6 +151,10 @@ const SearchForm = styled.form`
   &:focus-within {
     box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
   }
+
+  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
+    flex-direction: column;
+  }
 `;
 
 const SearchInput = styled.input`
@@ -148,9 +164,13 @@ const SearchInput = styled.input`
   font-size: 1rem;
   outline: none;
   background: ${(props) => props.theme.colors.cardBg};
-  
+
   &::placeholder {
     color: #bdc3c7;
+  }
+
+  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
+    margin-bottom: 0.5rem;
   }
 `;
 
@@ -163,18 +183,23 @@ const SearchButton = styled.button`
   display: flex;
   align-items: center;
   transition: all 0.3s ease;
-  
+
   &:hover {
     background: ${(props) => props.theme.colors.primaryDark};
   }
-  
+
   &:disabled {
     background: #bdc3c7;
     cursor: not-allowed;
   }
-  
+
   svg {
     margin-right: 0.5rem;
+  }
+
+  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
+    width: 100%;
+    justify-content: center;
   }
 `;
 
@@ -185,6 +210,10 @@ const WeatherCard = styled.div`
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
   animation: ${fadeIn} 0.5s ease-out;
   margin-bottom: 2rem;
+
+  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
+    padding: 1rem;
+  }
 `;
 
 const Location = styled.div`
@@ -214,7 +243,7 @@ const CurrentWeather = styled.div`
 
   @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
   }
 `;
 
@@ -234,7 +263,7 @@ const Temperature = styled.div`
   font-size: 3.5rem;
   font-weight: 300;
   margin-right: 2rem;
-  
+
   span {
     font-size: 2rem;
     vertical-align: super;
@@ -243,6 +272,11 @@ const Temperature = styled.div`
   @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
     margin-right: 0;
     margin-bottom: 1rem;
+    font-size: 2.5rem;
+
+    span {
+      font-size: 1.5rem;
+    }
   }
 `;
 
@@ -257,6 +291,10 @@ const WeatherDetails = styled.div`
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 1rem;
   margin-top: 1.5rem;
+
+  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 const DetailItem = styled.div`
@@ -334,6 +372,10 @@ const ForecastList = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
   gap: 1rem;
+
+  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  }
 `;
 
 const ForecastItem = styled.div`
@@ -343,28 +385,38 @@ const ForecastItem = styled.div`
   border-radius: 8px;
   transition: all 0.3s ease;
   cursor: default;
-  
+
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
   }
-  
+
   div:first-child {
     font-weight: 500;
     margin-bottom: 0.5rem;
     color: ${(props) => props.theme.colors.text};
   }
-  
+
   div:nth-child(2) {
     font-size: 1.5rem;
     margin: 0.5rem 0;
     display: flex;
     justify-content: center;
   }
-  
+
   div:last-child {
     color: ${(props) => props.theme.colors.textLight};
     font-size: 0.9rem;
+  }
+
+  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
+    padding: 0.5rem;
+    div:nth-child(2) {
+      font-size: 1.2rem;
+    }
+    div:last-child {
+      font-size: 0.8rem;
+    }
   }
 `;
 
