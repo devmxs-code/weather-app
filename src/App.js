@@ -77,29 +77,33 @@ const GlobalStyle = createGlobalStyle`
   body {
     margin: 0;
     padding: 0;
-    height: 100vh;
+    min-height: 100vh;
     width: 100vw;
     background-color: ${(props) => props.theme.colors.background};
-    display: flex;
-    justify-content: center;
-    align-items: center;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    box-sizing: border-box;
   }
 `;
 
 // Styled Components
 const AppContainer = styled.div`
+  width: 100%;
   max-width: 800px;
+  min-height: 100vh;
   margin: 0 auto;
   padding: 2rem 1rem;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: ${(props) => props.theme.colors.text};
   background: ${(props) => props.theme.colors.background};
-  min-height: 100vh;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 
-  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
-    padding: 1rem;
+  @media (max-width: 900px) {
+    max-width: 100%;
+    padding: 1.5rem 0.5rem;
+  }
+  @media (max-width: 600px) {
+    padding: 0.5rem 0.2rem;
   }
 `;
 
@@ -107,7 +111,7 @@ const Header = styled.header`
   text-align: center;
   margin-bottom: 2rem;
 
-  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
+  @media (max-width: 600px) {
     margin-bottom: 1rem;
   }
 `;
@@ -118,8 +122,8 @@ const Title = styled.h1`
   margin-bottom: 0.5rem;
   font-weight: 600;
 
-  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
-    font-size: 2rem;
+  @media (max-width: 600px) {
+    font-size: 1.5rem;
   }
 `;
 
@@ -129,8 +133,9 @@ const Subtitle = styled.p`
   max-width: 600px;
   margin: 0 auto;
 
-  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
+  @media (max-width: 600px) {
     font-size: 0.9rem;
+    max-width: 100%;
   }
 `;
 
@@ -168,8 +173,9 @@ const SearchForm = styled.form`
     box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
   }
 
-  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
+  @media (max-width: 600px) {
     flex-direction: column;
+    box-shadow: none;
   }
 `;
 
@@ -185,8 +191,10 @@ const SearchInput = styled.input`
     color: #bdc3c7;
   }
 
-  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
+  @media (max-width: 600px) {
     margin-bottom: 0.5rem;
+    padding: 0.8rem;
+    font-size: 0.95rem;
   }
 `;
 
@@ -213,9 +221,11 @@ const SearchButton = styled.button`
     margin-right: 0.5rem;
   }
 
-  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
+  @media (max-width: 600px) {
     width: 100%;
     justify-content: center;
+    padding: 0.8rem 0;
+    font-size: 1rem;
   }
 `;
 
@@ -227,8 +237,8 @@ const WeatherCard = styled.div`
   animation: ${fadeIn} 0.5s ease-out;
   margin-bottom: 2rem;
 
-  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
-    padding: 1rem;
+  @media (max-width: 600px) {
+    padding: 1rem 0.5rem;
   }
 `;
 
@@ -308,8 +318,12 @@ const WeatherDetails = styled.div`
   gap: 1rem;
   margin-top: 1.5rem;
 
-  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
+  @media (max-width: 900px) {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  }
+  @media (max-width: 600px) {
     grid-template-columns: 1fr;
+    gap: 0.5rem;
   }
 `;
 
@@ -389,8 +403,12 @@ const ForecastList = styled.div`
   grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
   gap: 1rem;
 
-  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
+  @media (max-width: 900px) {
     grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  }
+  @media (max-width: 600px) {
+    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+    gap: 0.5rem;
   }
 `;
 
