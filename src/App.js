@@ -61,9 +61,10 @@ const lightTheme = {
     success: '#4ad66d',
     text: '#2b2d42',
     textLight: '#8d99ae',
-    background: '#f8f9fa',
+    background: '#f5f5f5', // Fundo mais claro
     cardBg: '#ffffff',
     cardShadow: 'rgba(149, 157, 165, 0.2)',
+    border: '#e0e0e0', // Nova cor para bordas
     gradient: 'linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%)'
   },
   breakpoints: {
@@ -86,6 +87,7 @@ const darkTheme = {
     background: '#1a1a2e',
     cardBg: '#16213e',
     cardShadow: 'rgba(0, 0, 0, 0.3)',
+    border: '#2a2a3b', // Cor escura para bordas no modo escuro
     gradient: 'linear-gradient(135deg, #4895ef 0%, #4cc9f0 100%)' // Gradiente mais claro
   },
   breakpoints: {
@@ -252,9 +254,10 @@ const ThemeToggle = styled.button`
 
 const WeatherCard = styled.div`
   background: ${(props) => props.theme.colors.cardBg};
-  border-radius: 6px; /* Alterado para quinas mais quadradas */
+  border-radius: 6px;
   padding: 2rem;
   box-shadow: 0 15px 30px ${(props) => props.theme.colors.cardShadow};
+  border: 1px solid ${(props) => props.theme.colors.border}; /* Moldura */
   animation: ${fadeIn} 0.5s ease-out;
   transition: all 0.3s ease;
   position: relative;
@@ -281,7 +284,7 @@ const WeatherCard = styled.div`
 
   @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
     padding: 1.25rem;
-    border-radius: 4px; /* Ajustado para telas menores */
+    border-radius: 4px;
   }
 `;
 
@@ -421,17 +424,18 @@ const WeatherDetails = styled.div`
 const DetailItem = styled.div`
   background: ${(props) => props.theme.colors.background};
   padding: 1.25rem;
-  border-radius: 6px; /* Alterado para quinas mais quadradas */
+  border-radius: 6px;
   display: flex;
   align-items: center;
   transition: all 0.3s ease;
   box-shadow: 0 5px 15px ${(props) => props.theme.colors.cardShadow};
-  
+  border: 1px solid ${(props) => props.theme.colors.border}; /* Moldura */
+
   &:hover {
     transform: translateY(-3px);
     box-shadow: 0 8px 20px ${(props) => props.theme.colors.cardShadow};
   }
-  
+
   svg {
     margin-right: 1rem;
     color: ${(props) => props.theme.colors.primary};
@@ -569,6 +573,7 @@ const ForecastItem = styled.div`
   transition: all 0.3s ease;
   cursor: default;
   box-shadow: 0 5px 15px ${(props) => props.theme.colors.cardShadow};
+  border: 1px solid ${(props) => props.theme.colors.border}; /* Moldura */
   position: relative;
   overflow: hidden;
 
@@ -725,11 +730,12 @@ const HistoryItem = styled.div`
   align-items: center;
   padding: 1rem;
   background: ${(props) => props.theme.colors.cardBg};
-  border-radius: 6px; /* Alterado para quinas mais quadradas */
+  border-radius: 6px;
   margin-bottom: 0.75rem;
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 3px 10px ${(props) => props.theme.colors.cardShadow};
+  border: 1px solid ${(props) => props.theme.colors.border}; /* Moldura */
 
   &:hover {
     transform: translateY(-2px);
@@ -790,6 +796,10 @@ const SearchForm = styled.form`
   margin-left: auto;
   margin-right: auto;
   width: 100%;
+  border: 1px solid ${(props) => props.theme.colors.border}; /* Moldura */
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px ${(props) => props.theme.colors.cardShadow};
 `;
 
 const SearchInput = styled.input`
