@@ -11,7 +11,9 @@ import {
   FiAlertCircle,
   FiRefreshCw,
   FiMoon,
-  FiSun as FiSunIcon
+  FiSun as FiSunIcon,
+  FiChevronDown,
+  FiChevronUp
 } from 'react-icons/fi';
 import { 
   WiDaySunny, 
@@ -22,9 +24,9 @@ import {
   WiFog,
   WiDayCloudy,
   WiNightClear,
-  WiHumidity
+  WiHumidity,
+  WiStrongWind
 } from 'weather-icons-react';
-import './App.css'; // Importa o arquivo CSS
 
 // Animations
 const fadeIn = keyframes`
@@ -32,47 +34,68 @@ const fadeIn = keyframes`
   to { opacity: 1; transform: translateY(0); }
 `;
 
+const slideIn = keyframes`
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+`;
+
 const rotate = keyframes`
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 `;
 
+const pulse = keyframes`
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+`;
+
 // Themes
 const lightTheme = {
   colors: {
-    primary: '#3498db',
-    primaryDark: '#2980b9',
-    danger: '#e74c3c',
-    warning: '#f39c12',
-    success: '#2ecc71',
-    text: '#2c3e50',
-    textLight: '#7f8c8d',
+    primary: '#4361ee',
+    primaryDark: '#3a0ca3',
+    secondary: '#4cc9f0',
+    danger: '#f72585',
+    warning: '#f8961e',
+    success: '#4ad66d',
+    text: '#2b2d42',
+    textLight: '#8d99ae',
     background: '#f8f9fa',
     cardBg: '#ffffff',
+    cardShadow: 'rgba(149, 157, 165, 0.2)',
+    gradient: 'linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%)'
   },
   breakpoints: {
-    sm: '576px', // Adicionado breakpoint para telas pequenas
+    sm: '576px',
+    md: '768px',
+    lg: '992px'
   },
 };
 
 const darkTheme = {
   colors: {
-    primary: '#3498db',
-    primaryDark: '#2980b9',
-    danger: '#e74c3c',
-    warning: '#f39c12',
-    success: '#2ecc71',
-    text: '#ecf0f1',
-    textLight: '#bdc3c7',
-    background: '#2c3e50',
-    cardBg: '#34495e',
+    primary: '#4895ef',
+    primaryDark: '#3a0ca3',
+    secondary: '#4cc9f0',
+    danger: '#f72585',
+    warning: '#f8961e',
+    success: '#4ad66d',
+    text: '#edf2f4',
+    textLight: '#8d99ae',
+    background: '#1a1a2e',
+    cardBg: '#16213e',
+    cardShadow: 'rgba(0, 0, 0, 0.3)',
+    gradient: 'linear-gradient(135deg, #16213e 0%, #0f3460 100%)'
   },
   breakpoints: {
-    sm: '576px', // Adicionado breakpoint para telas pequenas
+    sm: '576px',
+    md: '768px',
+    lg: '992px'
   },
 };
 
-// Estilo global para aplicar o fundo ao body
+// Estilo global
 const GlobalStyle = createGlobalStyle`
   body {
     margin: 0;
@@ -80,62 +103,95 @@ const GlobalStyle = createGlobalStyle`
     min-height: 100vh;
     width: 100vw;
     background-color: ${(props) => props.theme.colors.background};
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     box-sizing: border-box;
+    color: ${(props) => props.theme.colors.text};
+    transition: all 0.3s ease;
+    line-height: 1.6;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
+    html {
+      font-size: 14px;
+    }
   }
 `;
 
 // Styled Components
 const AppContainer = styled.div`
   width: 100%;
-  max-width: 800px;
+  max-width: 1200px;
   min-height: 100vh;
   margin: 0 auto;
-  padding: 2rem 1rem;
-  color: ${(props) => props.theme.colors.text};
-  background: ${(props) => props.theme.colors.background};
-  box-sizing: border-box;
+  padding: 2rem;
   display: flex;
   flex-direction: column;
+  position: relative;
+  overflow-x: hidden;
 
-  @media (max-width: 900px) {
-    max-width: 100%;
-    padding: 1.5rem 0.5rem;
+  @media (max-width: ${(props) => props.theme.breakpoints.lg}) {
+    padding: 1.5rem;
   }
-  @media (max-width: 600px) {
-    padding: 0.5rem 0.2rem;
+
+  @media (max-width: ${(props) => props.theme.breakpoints.md}) {
+    padding: 1rem;
   }
 `;
 
 const Header = styled.header`
   text-align: center;
   margin-bottom: 2rem;
+  position: relative;
+  z-index: 10;
 
-  @media (max-width: 600px) {
-    margin-bottom: 1rem;
+  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
+    margin-bottom: 1.5rem;
   }
 `;
 
 const Title = styled.h1`
-  font-size: 2.5rem;
-  color: ${(props) => props.theme.colors.primary};
+  font-size: 3rem;
+  background: ${(props) => props.theme.colors.gradient};
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
   margin-bottom: 0.5rem;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  position: relative;
+  display: inline-block;
 
-  @media (max-width: 600px) {
-    font-size: 1.5rem;
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: ${(props) => props.theme.colors.gradient};
+    border-radius: 3px;
+  }
+
+  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
+    font-size: 2rem;
   }
 `;
 
 const Subtitle = styled.p`
   color: ${(props) => props.theme.colors.textLight};
-  font-size: 1rem;
-  max-width: 600px;
+  font-size: 1.1rem;
+  max-width: 700px;
   margin: 0 auto;
+  font-weight: 300;
 
-  @media (max-width: 600px) {
+  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
     font-size: 0.9rem;
-    max-width: 100%;
   }
 `;
 
@@ -143,311 +199,549 @@ const ThemeToggle = styled.button`
   background: ${(props) => props.theme.colors.cardBg};
   color: ${(props) => props.theme.colors.text};
   border: none;
-  padding: 0.5rem 1rem;
+  padding: 0.75rem 1.25rem;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 50px;
   display: flex;
   align-items: center;
-  margin-bottom: 1rem;
+  margin: 0 auto 2rem;
   transition: all 0.3s ease;
+  box-shadow: 0 4px 6px ${(props) => props.theme.colors.cardShadow};
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: ${(props) => props.theme.colors.gradient};
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+  }
 
   &:hover {
-    background: ${(props) => props.theme.colors.primary};
     color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px ${(props) => props.theme.colors.cardShadow};
+
+    &::before {
+      opacity: 1;
+    }
   }
 
   svg {
     margin-right: 0.5rem;
+    transition: transform 0.3s ease;
+  }
+
+  &:hover svg {
+    transform: rotate(15deg);
+  }
+
+  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
+    padding: 0.6rem 1rem;
+    font-size: 0.8rem;
   }
 `;
 
 const SearchForm = styled.form`
   display: flex;
   margin-bottom: 2rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
+  border-radius: 50px;
   overflow: hidden;
   transition: all 0.3s ease;
+  box-shadow: 0 10px 20px ${(props) => props.theme.colors.cardShadow};
+  position: relative;
+  z-index: 10;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
 
   &:focus-within {
-    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
+    box-shadow: 0 10px 30px rgba(67, 97, 238, 0.3);
+    transform: translateY(-2px);
   }
 
-  @media (max-width: 600px) {
+  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
     flex-direction: column;
-    box-shadow: none;
+    border-radius: 20px;
+    box-shadow: 0 5px 15px ${(props) => props.theme.colors.cardShadow};
   }
 `;
 
 const SearchInput = styled.input`
   flex: 1;
-  padding: 1rem;
+  padding: 1.25rem 1.5rem;
   border: none;
   font-size: 1rem;
   outline: none;
   background: ${(props) => props.theme.colors.cardBg};
+  color: ${(props) => props.theme.colors.text};
+  font-family: 'Poppins', sans-serif;
+  transition: all 0.3s ease;
 
   &::placeholder {
-    color: #bdc3c7;
+    color: ${(props) => props.theme.colors.textLight};
+    opacity: 0.7;
   }
 
-  @media (max-width: 600px) {
-    margin-bottom: 0.5rem;
-    padding: 0.8rem;
-    font-size: 0.95rem;
+  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
+    padding: 1rem;
+    font-size: 0.9rem;
   }
 `;
 
 const SearchButton = styled.button`
-  background: ${(props) => props.theme.colors.primary};
+  background: ${(props) => props.theme.colors.gradient};
   color: white;
   border: none;
-  padding: 0 1.5rem;
+  padding: 0 2rem;
   cursor: pointer;
   display: flex;
   align-items: center;
+  justify-content: center;
   transition: all 0.3s ease;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: ${(props) => props.theme.colors.primaryDark};
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
 
   &:hover {
-    background: ${(props) => props.theme.colors.primaryDark};
+    &::before {
+      opacity: 0.2;
+    }
+    transform: translateY(-1px);
   }
 
   &:disabled {
-    background: #bdc3c7;
+    background: ${(props) => props.theme.colors.textLight};
     cursor: not-allowed;
+    opacity: 0.7;
   }
 
   svg {
-    margin-right: 0.5rem;
+    margin-right: 0.75rem;
+    transition: transform 0.3s ease;
   }
 
-  @media (max-width: 600px) {
+  &:hover svg {
+    transform: scale(1.1);
+  }
+
+  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
     width: 100%;
-    justify-content: center;
-    padding: 0.8rem 0;
-    font-size: 1rem;
+    padding: 1rem;
+    font-size: 0.8rem;
+  }
+`;
+
+const WeatherContainer = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+
+  @media (max-width: ${(props) => props.theme.breakpoints.lg}) {
+    grid-template-columns: 1fr;
   }
 `;
 
 const WeatherCard = styled.div`
   background: ${(props) => props.theme.colors.cardBg};
-  border-radius: 12px;
+  border-radius: 20px;
   padding: 2rem;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 15px 30px ${(props) => props.theme.colors.cardShadow};
   animation: ${fadeIn} 0.5s ease-out;
-  margin-bottom: 2rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 
-  @media (max-width: 600px) {
-    padding: 1rem 0.5rem;
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px ${(props) => props.theme.colors.cardShadow};
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 5px;
+    height: 100%;
+    background: ${(props) => props.theme.colors.gradient};
+  }
+
+  @media (max-width: ${(props) => props.theme.breakpoints.md}) {
+    padding: 1.5rem;
+  }
+
+  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
+    padding: 1.25rem;
+    border-radius: 15px;
   }
 `;
 
 const Location = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
   
   h2 {
     margin: 0;
     font-size: 1.8rem;
-    font-weight: 500;
+    font-weight: 600;
     color: ${(props) => props.theme.colors.text};
+    position: relative;
+    display: inline-block;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 50px;
+      height: 3px;
+      background: ${(props) => props.theme.colors.gradient};
+      border-radius: 3px;
+    }
   }
   
   svg {
-    margin-right: 0.5rem;
-    color: ${(props) => props.theme.colors.danger};
+    margin-right: 0.75rem;
+    color: ${(props) => props.theme.colors.primary};
     min-width: 24px;
+    transition: transform 0.3s ease;
+  }
+
+  &:hover svg {
+    transform: scale(1.1);
+  }
+
+  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
+    h2 {
+      font-size: 1.5rem;
+    }
   }
 `;
 
 const CurrentWeather = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
   flex-wrap: wrap;
 
   @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
   }
 `;
 
 const WeatherIcon = styled.div`
-  font-size: 4rem;
+  font-size: 5rem;
   margin-right: 2rem;
   display: flex;
   align-items: center;
+  animation: ${pulse} 2s infinite ease-in-out;
 
   @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
     margin-right: 0;
     margin-bottom: 1rem;
+    font-size: 4rem;
   }
 `;
 
 const Temperature = styled.div`
-  font-size: 3.5rem;
+  font-size: 4rem;
   font-weight: 300;
   margin-right: 2rem;
+  position: relative;
+  display: inline-block;
+  background: ${(props) => props.theme.colors.gradient};
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 
   span {
     font-size: 2rem;
     vertical-align: super;
+    position: absolute;
+    top: 0.5rem;
+    right: -1.5rem;
   }
 
   @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
+    font-size: 3rem;
     margin-right: 0;
     margin-bottom: 1rem;
-    font-size: 2.5rem;
 
     span {
       font-size: 1.5rem;
+      top: 0.3rem;
+      right: -1rem;
     }
   }
 `;
 
 const WeatherDescription = styled.div`
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   color: ${(props) => props.theme.colors.textLight};
   text-transform: capitalize;
+  font-weight: 400;
+  padding: 0.5rem 1rem;
+  background: rgba(67, 97, 238, 0.1);
+  border-radius: 50px;
+  margin-top: 0.5rem;
+
+  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
+    font-size: 1rem;
+  }
 `;
 
 const WeatherDetails = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 1rem;
-  margin-top: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
 
-  @media (max-width: 900px) {
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  @media (max-width: ${(props) => props.theme.breakpoints.md}) {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   }
-  @media (max-width: 600px) {
-    grid-template-columns: 1fr;
-    gap: 0.5rem;
+
+  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
   }
 `;
 
 const DetailItem = styled.div`
   background: ${(props) => props.theme.colors.background};
-  padding: 1rem;
-  border-radius: 8px;
+  padding: 1.25rem;
+  border-radius: 12px;
   display: flex;
   align-items: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px ${(props) => props.theme.colors.cardShadow};
+  
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px ${(props) => props.theme.colors.cardShadow};
+  }
   
   svg {
-    margin-right: 0.5rem;
+    margin-right: 1rem;
     color: ${(props) => props.theme.colors.primary};
     min-width: 24px;
+    font-size: 1.5rem;
+    transition: transform 0.3s ease;
+  }
+
+  &:hover svg {
+    transform: scale(1.1);
   }
 
   div {
     div:first-child {
       font-size: 0.9rem;
       color: ${(props) => props.theme.colors.textLight};
+      margin-bottom: 0.25rem;
+      font-weight: 400;
     }
     
     div:last-child {
-      font-weight: 500;
+      font-weight: 600;
       color: ${(props) => props.theme.colors.text};
+      font-size: 1.1rem;
     }
+  }
+
+  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
+    padding: 1rem;
   }
 `;
 
 const Loading = styled.div`
   text-align: center;
-  padding: 2rem;
+  padding: 3rem;
   font-size: 1.2rem;
   color: ${(props) => props.theme.colors.textLight};
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  min-height: 300px;
   
   svg {
     animation: ${rotate} 1s linear infinite;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
     color: ${(props) => props.theme.colors.primary};
+    font-size: 2rem;
+  }
+
+  p {
+    margin-top: 1rem;
+    font-weight: 300;
   }
 `;
 
 const ErrorMessage = styled.div`
-  background: #f8d7da;
-  color: #721c24;
-  padding: 1rem;
-  border-radius: 8px;
-  margin-bottom: 1rem;
+  background: rgba(247, 37, 133, 0.1);
+  color: ${(props) => props.theme.colors.danger};
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
   display: flex;
   align-items: center;
+  border-left: 4px solid ${(props) => props.theme.colors.danger};
+  animation: ${slideIn} 0.3s ease-out;
   
   svg {
-    margin-right: 0.5rem;
+    margin-right: 1rem;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  p {
+    margin: 0;
+    font-weight: 500;
+  }
+
+  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
+    padding: 1rem;
+    font-size: 0.9rem;
   }
 `;
 
 const ForecastContainer = styled.div`
-  margin-top: 2rem;
+  margin-top: 0;
 `;
 
 const ForecastTitle = styled.h3`
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   color: ${(props) => props.theme.colors.text};
-  margin-bottom: 1rem;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  font-weight: 600;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: ${(props) => props.theme.colors.gradient};
+    border-radius: 3px;
+  }
+
+  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
+    font-size: 1.25rem;
+  }
 `;
 
 const ForecastList = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1.5rem;
 
-  @media (max-width: 900px) {
-    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  @media (max-width: ${(props) => props.theme.breakpoints.md}) {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   }
-  @media (max-width: 600px) {
-    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
-    gap: 0.5rem;
+
+  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 1rem;
   }
 `;
 
 const ForecastItem = styled.div`
   text-align: center;
-  padding: 1rem;
-  background: ${(props) => props.theme.colors.background};
-  border-radius: 8px;
+  padding: 1.5rem;
+  background: ${(props) => props.theme.colors.cardBg};
+  border-radius: 15px;
   transition: all 0.3s ease;
   cursor: default;
+  box-shadow: 0 5px 15px ${(props) => props.theme.colors.cardShadow};
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: ${(props) => props.theme.colors.gradient};
+  }
 
   &:hover {
     transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 25px ${(props) => props.theme.colors.cardShadow};
   }
 
   div:first-child {
-    font-weight: 500;
-    margin-bottom: 0.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
     color: ${(props) => props.theme.colors.text};
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
   }
 
   div:nth-child(2) {
-    font-size: 1.5rem;
-    margin: 0.5rem 0;
+    font-size: 2rem;
+    margin: 1rem 0;
     display: flex;
     justify-content: center;
+    color: ${(props) => props.theme.colors.primary};
   }
 
   div:last-child {
-    color: ${(props) => props.theme.colors.textLight};
-    font-size: 0.9rem;
+    color: ${(props) => props.theme.colors.text};
+    font-weight: 500;
+    font-size: 1rem;
+    margin-top: 0.5rem;
+    background: rgba(67, 97, 238, 0.1);
+    padding: 0.5rem;
+    border-radius: 50px;
   }
 
   @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
-    padding: 0.5rem;
-    div:nth-child(2) {
-      font-size: 1.2rem;
+    padding: 1rem;
+
+    div:first-child {
+      font-size: 0.9rem;
     }
+
+    div:nth-child(2) {
+      font-size: 1.5rem;
+    }
+
     div:last-child {
       font-size: 0.8rem;
     }
@@ -462,43 +756,141 @@ const RefreshButton = styled.button`
   display: flex;
   align-items: center;
   font-size: 0.9rem;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
   transition: all 0.3s ease;
+  font-weight: 500;
+  background: rgba(67, 97, 238, 0.1);
   
   &:hover {
-    background: rgba(52, 152, 219, 0.1);
+    background: rgba(67, 97, 238, 0.2);
+    transform: translateY(-1px);
   }
   
   svg {
-    margin-right: 0.25rem;
+    margin-right: 0.5rem;
+    transition: transform 0.3s ease;
+  }
+
+  &:hover svg {
+    transform: rotate(180deg);
+  }
+
+  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
   }
 `;
 
 const UnitToggle = styled.div`
   display: flex;
   justify-content: flex-end;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
   
   button {
-    background: ${(props) => props.theme.colors.background};
+    background: ${(props) => props.theme.colors.cardBg};
     border: none;
     padding: 0.5rem 1rem;
     cursor: pointer;
     transition: all 0.3s ease;
+    font-weight: 500;
+    color: ${(props) => props.theme.colors.textLight};
+    box-shadow: 0 2px 5px ${(props) => props.theme.colors.cardShadow};
     
     &:first-child {
-      border-radius: 4px 0 0 4px;
+      border-radius: 50px 0 0 50px;
     }
     
     &:last-child {
-      border-radius: 0 4px 4px 0;
+      border-radius: 0 50px 50px 0;
     }
     
     &.active {
       background: ${(props) => props.theme.colors.primary};
       color: white;
+      box-shadow: 0 4px 8px rgba(67, 97, 238, 0.3);
     }
+
+    &:hover:not(.active) {
+      background: ${(props) => props.theme.colors.background};
+    }
+  }
+
+  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
+    margin-bottom: 1rem;
+    
+    button {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.8rem;
+    }
+  }
+`;
+
+const HistoryContainer = styled.div`
+  margin-top: 2rem;
+`;
+
+const HistoryItem = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: ${(props) => props.theme.colors.cardBg};
+  border-radius: 12px;
+  margin-bottom: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 10px ${(props) => props.theme.colors.cardShadow};
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px ${(props) => props.theme.colors.cardShadow};
+    background: ${(props) => props.theme.colors.primary};
+    color: white;
+
+    div {
+      color: white;
+    }
+  }
+
+  div:first-child {
+    font-weight: 500;
+  }
+
+  div:last-child {
+    color: ${(props) => props.theme.colors.textLight};
+    font-size: 0.8rem;
+  }
+`;
+
+const ExpandButton = styled.button`
+  background: none;
+  border: none;
+  color: ${(props) => props.theme.colors.primary};
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  margin-left: auto;
+  margin-right: auto;
+  background: rgba(67, 97, 238, 0.1);
+
+  &:hover {
+    background: rgba(67, 97, 238, 0.2);
+  }
+
+  svg {
+    margin-left: 0.5rem;
+    transition: transform 0.3s ease;
+  }
+
+  &:hover svg {
+    transform: translateY(2px);
   }
 `;
 
@@ -511,7 +903,8 @@ function App() {
   const [lastUpdated, setLastUpdated] = useState(null);
   const [unit, setUnit] = useState('celsius');
   const [searchHistory, setSearchHistory] = useState([]);
-  const [darkMode, setDarkMode] = useState(false); // Estado para alternar entre temas
+  const [darkMode, setDarkMode] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
 
   const fetchWeather = React.useCallback(async () => {
     if (!city.trim()) return;
@@ -673,15 +1066,15 @@ function App() {
   const getWeatherIcon = (code, isDay = true) => {
     const size = 48;
     
-    if (code === 0) return isDay ? <WiDaySunny size={size} color="#F39C12" /> : <WiNightClear size={size} color="#2C3E50" />;
-    if (code === 1) return isDay ? <WiDayCloudy size={size} color="#BDC3C7" /> : <WiNightClear size={size} color="#2C3E50" />;
-    if (code <= 3) return <WiCloudy size={size} color="#BDC3C7" />;
-    if (code <= 67) return <WiRain size={size} color="#3498DB" />;
-    if (code <= 86) return <WiSnow size={size} color="#ECF0F1" />;
-    if (code >= 95) return <WiThunderstorm size={size} color="#9B59B6" />;
-    if (code <= 48) return <WiFog size={size} color="#95A5A6" />;
+    if (code === 0) return isDay ? <WiDaySunny size={size} /> : <WiNightClear size={size} />;
+    if (code === 1) return isDay ? <WiDayCloudy size={size} /> : <WiNightClear size={size} />;
+    if (code <= 3) return <WiCloudy size={size} />;
+    if (code <= 67) return <WiRain size={size} />;
+    if (code <= 86) return <WiSnow size={size} />;
+    if (code >= 95) return <WiThunderstorm size={size} />;
+    if (code <= 48) return <WiFog size={size} />;
     
-    return <WiDaySunny size={size} color="#F39C12" />;
+    return <WiDaySunny size={size} />;
   };
 
   const convertTemp = (temp) => {
@@ -699,10 +1092,15 @@ function App() {
     setDarkMode((prevMode) => !prevMode);
   };
 
+  const handleHistoryClick = (cityName) => {
+    setCity(cityName);
+    setShowHistory(false);
+  };
+
   return (
     <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
       <>
-        <GlobalStyle /> {/* Aplica o estilo global */}
+        <GlobalStyle />
         <AppContainer>
           <Header>
             <Title>Previsão do Tempo</Title>
@@ -744,107 +1142,124 @@ function App() {
           {loading && (
             <Loading>
               <FiRefreshCw size={24} />
-              Carregando dados meteorológicos...
+              <p>Carregando dados meteorológicos...</p>
             </Loading>
           )}
           
           {error && (
             <ErrorMessage>
               <FiAlertCircle size={18} />
-              {error}
+              <p>{error}</p>
             </ErrorMessage>
           )}
 
           {weather && (
             <>
-              <WeatherCard>
-                <Location>
-                  <FiMapPin size={24} />
-                  <h2>{weather.city}, {weather.country}</h2>
-                </Location>
+              <WeatherContainer>
+                <WeatherCard>
+                  <Location>
+                    <FiMapPin size={24} />
+                    <h2>{weather.city}, {weather.country}</h2>
+                  </Location>
 
-                <CurrentWeather>
-                  <WeatherIcon>
-                    {getWeatherIcon(weather.current.weathercode)}
-                  </WeatherIcon>
-                  <Temperature>
-                    {convertTemp(weather.current.temperature)}<span>°{unit === 'celsius' ? 'C' : 'F'}</span>
-                  </Temperature>
-                  <WeatherDescription>
-                    {getWeatherDescription(weather.current.weathercode)}
-                  </WeatherDescription>
-                </CurrentWeather>
+                  <CurrentWeather>
+                    <WeatherIcon>
+                      {getWeatherIcon(weather.current.weathercode)}
+                    </WeatherIcon>
+                    <Temperature>
+                      {convertTemp(weather.current.temperature)}<span>°{unit === 'celsius' ? 'C' : 'F'}</span>
+                    </Temperature>
+                    <WeatherDescription>
+                      {getWeatherDescription(weather.current.weathercode)}
+                    </WeatherDescription>
+                  </CurrentWeather>
 
-                <WeatherDetails>
-                  <DetailItem>
-                    <FiDroplet size={20} />
-                    <div>
-                      <div>Umidade</div>
-                      <div>{weather.current.humidity}%</div>
-                    </div>
-                  </DetailItem>
-                  <DetailItem>
-                    <FiWind size={20} />
-                    <div>
-                      <div>Vento</div>
-                      <div>{weather.current.windspeed} km/h</div>
-                    </div>
-                  </DetailItem>
-                  <DetailItem>
-                    <WiHumidity size={20} />
-                    <div>
-                      <div>Precipitação</div>
-                      <div>{weather.current.precipitation} mm</div>
-                    </div>
-                  </DetailItem>
-                  <DetailItem>
-                    <FiSun size={20} />
-                    <div>
-                      <div>Nascer do sol</div>
-                      <div>{formatTime(weather.today.sunrise)}</div>
-                    </div>
-                  </DetailItem>
-                  <DetailItem>
-                    <FiSun size={20} style={{ transform: 'rotate(180deg)' }} />
-                    <div>
-                      <div>Pôr do sol</div>
-                      <div>{formatTime(weather.today.sunset)}</div>
-                    </div>
-                  </DetailItem>
-                  <DetailItem>
-                    <FiClock size={20} />
-                    <div>
-                      <div>Atualizado</div>
-                      <div>{lastUpdated && lastUpdated.toLocaleTimeString('pt-BR')}</div>
-                    </div>
-                  </DetailItem>
-                </WeatherDetails>
-              </WeatherCard>
+                  <WeatherDetails>
+                    <DetailItem>
+                      <FiDroplet size={20} />
+                      <div>
+                        <div>Umidade</div>
+                        <div>{weather.current.humidity}%</div>
+                      </div>
+                    </DetailItem>
+                    <DetailItem>
+                      <WiStrongWind size={20} />
+                      <div>
+                        <div>Vento</div>
+                        <div>{weather.current.windspeed} km/h</div>
+                      </div>
+                    </DetailItem>
+                    <DetailItem>
+                      <WiHumidity size={20} />
+                      <div>
+                        <div>Precipitação</div>
+                        <div>{weather.current.precipitation} mm</div>
+                      </div>
+                    </DetailItem>
+                    <DetailItem>
+                      <FiSun size={20} />
+                      <div>
+                        <div>Nascer do sol</div>
+                        <div>{formatTime(weather.today.sunrise)}</div>
+                      </div>
+                    </DetailItem>
+                    <DetailItem>
+                      <FiSun size={20} style={{ transform: 'rotate(180deg)' }} />
+                      <div>
+                        <div>Pôr do sol</div>
+                        <div>{formatTime(weather.today.sunset)}</div>
+                      </div>
+                    </DetailItem>
+                    <DetailItem>
+                      <FiClock size={20} />
+                      <div>
+                        <div>Atualizado</div>
+                        <div>{lastUpdated && lastUpdated.toLocaleTimeString('pt-BR')}</div>
+                      </div>
+                    </DetailItem>
+                  </WeatherDetails>
+                </WeatherCard>
 
-              {forecast && (
-                <ForecastContainer>
+                {forecast && (
+                  <WeatherCard>
+                    <ForecastTitle>
+                      Previsão para 5 dias
+                      <RefreshButton onClick={handleRefresh}>
+                        <FiRefreshCw size={16} />
+                        Atualizar
+                      </RefreshButton>
+                    </ForecastTitle>
+                    <ForecastList>
+                      {forecast.map((day, index) => (
+                        <ForecastItem key={index}>
+                          <div>{day.day}</div>
+                          <div>{getWeatherIcon(day.weathercode)}</div>
+                          <div>
+                            {convertTemp(day.temp_max)}° / {convertTemp(day.temp_min)}°
+                          </div>
+                        </ForecastItem>
+                      ))}
+                    </ForecastList>
+                  </WeatherCard>
+                )}
+              </WeatherContainer>
+
+              {searchHistory.length > 0 && (
+                <HistoryContainer>
                   <ForecastTitle>
-                    Previsão para os próximos dias
-                    <RefreshButton onClick={handleRefresh}>
-                      <FiRefreshCw size={16} />
-                      Atualizar
-                    </RefreshButton>
+                    Histórico de Buscas
+                    <ExpandButton onClick={() => setShowHistory(!showHistory)}>
+                      {showHistory ? 'Mostrar menos' : 'Mostrar mais'}
+                      {showHistory ? <FiChevronUp /> : <FiChevronDown />}
+                    </ExpandButton>
                   </ForecastTitle>
-                  <ForecastList>
-                    {forecast.map((day, index) => (
-                      <ForecastItem key={index}>
-                        <div>{day.day}</div>
-                        <div>{getWeatherIcon(day.weathercode)}</div>
-                        <div>
-                          {convertTemp(day.temp_max)}° / {convertTemp(day.temp_min)}°
-                        </div>
-                        <div>
-                          ☀️ {formatTime(day.sunrise)} / 🌙 {formatTime(day.sunset)}
-                        </div>
-                      </ForecastItem>
-                    ))}
-                  </ForecastList>
-                </ForecastContainer>
+                  {(showHistory ? searchHistory : searchHistory.slice(0, 3)).map((item, index) => (
+                    <HistoryItem key={index} onClick={() => handleHistoryClick(item.city)}>
+                      <div>{item.city}, {item.country}</div>
+                      <div>{new Date(item.timestamp).toLocaleString('pt-BR')}</div>
+                    </HistoryItem>
+                  ))}
+                </HistoryContainer>
               )}
             </>
           )}
