@@ -81,12 +81,12 @@ const darkTheme = {
     danger: '#f72585',
     warning: '#f8961e',
     success: '#4ad66d',
-    text: '#edf2f4',
-    textLight: '#8d99ae',
+    text: '#ffffff', // Branco para maior contraste
+    textLight: '#d1d1d1', // Tom mais claro para texto secundário
     background: '#1a1a2e',
     cardBg: '#16213e',
     cardShadow: 'rgba(0, 0, 0, 0.3)',
-    gradient: 'linear-gradient(135deg, #16213e 0%, #0f3460 100%)'
+    gradient: 'linear-gradient(135deg, #4895ef 0%, #4cc9f0 100%)' // Gradiente mais claro
   },
   breakpoints: {
     sm: '576px',
@@ -174,7 +174,7 @@ const Title = styled.h1`
     left: 0;
     width: 100%;
     height: 3px;
-    background: ${(props) => props.theme.colors.gradient};
+    background: ${(props) => props.theme.colors.primary};
     border-radius: 3px;
   }
 
@@ -250,126 +250,9 @@ const ThemeToggle = styled.button`
   }
 `;
 
-const SearchForm = styled.form`
-  display: flex;
-  margin-bottom: 2rem;
-  border-radius: 50px;
-  overflow: hidden;
-  transition: all 0.3s ease;
-  box-shadow: 0 10px 20px ${(props) => props.theme.colors.cardShadow};
-  position: relative;
-  z-index: 10;
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-
-  &:focus-within {
-    box-shadow: 0 10px 30px rgba(67, 97, 238, 0.3);
-    transform: translateY(-2px);
-  }
-
-  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
-    flex-direction: column;
-    border-radius: 20px;
-    box-shadow: 0 5px 15px ${(props) => props.theme.colors.cardShadow};
-  }
-`;
-
-const SearchInput = styled.input`
-  flex: 1;
-  padding: 1.25rem 1.5rem;
-  border: none;
-  font-size: 1rem;
-  outline: none;
-  background: ${(props) => props.theme.colors.cardBg};
-  color: ${(props) => props.theme.colors.text};
-  font-family: 'Poppins', sans-serif;
-  transition: all 0.3s ease;
-
-  &::placeholder {
-    color: ${(props) => props.theme.colors.textLight};
-    opacity: 0.7;
-  }
-
-  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
-    padding: 1rem;
-    font-size: 0.9rem;
-  }
-`;
-
-const SearchButton = styled.button`
-  background: ${(props) => props.theme.colors.gradient};
-  color: white;
-  border: none;
-  padding: 0 2rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  font-weight: 500;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  font-size: 0.9rem;
-  position: relative;
-  overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: ${(props) => props.theme.colors.primaryDark};
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-
-  &:hover {
-    &::before {
-      opacity: 0.2;
-    }
-    transform: translateY(-1px);
-  }
-
-  &:disabled {
-    background: ${(props) => props.theme.colors.textLight};
-    cursor: not-allowed;
-    opacity: 0.7;
-  }
-
-  svg {
-    margin-right: 0.75rem;
-    transition: transform 0.3s ease;
-  }
-
-  &:hover svg {
-    transform: scale(1.1);
-  }
-
-  @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
-    width: 100%;
-    padding: 1rem;
-    font-size: 0.8rem;
-  }
-`;
-
-const WeatherContainer = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-  margin-bottom: 2rem;
-
-  @media (max-width: ${(props) => props.theme.breakpoints.lg}) {
-    grid-template-columns: 1fr;
-  }
-`;
-
 const WeatherCard = styled.div`
   background: ${(props) => props.theme.colors.cardBg};
-  border-radius: 20px;
+  border-radius: 6px; /* Alterado para quinas mais quadradas */
   padding: 2rem;
   box-shadow: 0 15px 30px ${(props) => props.theme.colors.cardShadow};
   animation: ${fadeIn} 0.5s ease-out;
@@ -398,7 +281,7 @@ const WeatherCard = styled.div`
 
   @media (max-width: ${(props) => props.theme.breakpoints.sm}) {
     padding: 1.25rem;
-    border-radius: 15px;
+    border-radius: 4px; /* Ajustado para telas menores */
   }
 `;
 
@@ -481,8 +364,8 @@ const Temperature = styled.div`
   background: ${(props) => props.theme.colors.gradient};
   -webkit-background-clip: text;
   background-clip: text;
-  color: transparent;
-
+  color: ${(props) => props.theme.colors.text}; /* Alterado para usar a cor do texto */
+  
   span {
     font-size: 2rem;
     vertical-align: super;
@@ -538,7 +421,7 @@ const WeatherDetails = styled.div`
 const DetailItem = styled.div`
   background: ${(props) => props.theme.colors.background};
   padding: 1.25rem;
-  border-radius: 12px;
+  border-radius: 6px; /* Alterado para quinas mais quadradas */
   display: flex;
   align-items: center;
   transition: all 0.3s ease;
@@ -682,7 +565,7 @@ const ForecastItem = styled.div`
   text-align: center;
   padding: 1.5rem;
   background: ${(props) => props.theme.colors.cardBg};
-  border-radius: 15px;
+  border-radius: 6px;
   transition: all 0.3s ease;
   cursor: default;
   box-shadow: 0 5px 15px ${(props) => props.theme.colors.cardShadow};
@@ -706,7 +589,7 @@ const ForecastItem = styled.div`
 
   div:first-child {
     font-weight: 600;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
     color: ${(props) => props.theme.colors.text};
     font-size: 1.1rem;
     text-transform: uppercase;
@@ -714,6 +597,12 @@ const ForecastItem = styled.div`
   }
 
   div:nth-child(2) {
+    font-size: 0.9rem;
+    color: ${(props) => props.theme.colors.textLight};
+    margin-bottom: 0.5rem;
+  }
+
+  div:nth-child(3) {
     font-size: 2rem;
     margin: 1rem 0;
     display: flex;
@@ -738,7 +627,7 @@ const ForecastItem = styled.div`
       font-size: 0.9rem;
     }
 
-    div:nth-child(2) {
+    div:nth-child(3) {
       font-size: 1.5rem;
     }
 
@@ -836,7 +725,7 @@ const HistoryItem = styled.div`
   align-items: center;
   padding: 1rem;
   background: ${(props) => props.theme.colors.cardBg};
-  border-radius: 12px;
+  border-radius: 6px; /* Alterado para quinas mais quadradas */
   margin-bottom: 0.75rem;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -892,6 +781,64 @@ const ExpandButton = styled.button`
   &:hover svg {
     transform: translateY(2px);
   }
+`;
+
+const SearchForm = styled.form`
+  display: flex;
+  margin-bottom: 2rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+`;
+
+const SearchInput = styled.input`
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid ${(props) => props.theme.colors.primary};
+  border-radius: 6px 0 0 6px;
+  font-size: 1rem;
+  outline: none;
+  color: ${(props) => props.theme.colors.text};
+  background: ${(props) => props.theme.colors.cardBg};
+  transition: all 0.3s ease;
+
+  &:focus {
+    border-color: ${(props) => props.theme.colors.primaryDark};
+    box-shadow: 0 0 0 2px ${(props) => props.theme.colors.primary}22;
+  }
+`;
+
+const SearchButton = styled.button`
+  background: ${(props) => props.theme.colors.primary};
+  color: white;
+  border: none;
+  padding: 0 2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  font-size: 1rem;
+  border-radius: 0 6px 6px 0;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: ${(props) => props.theme.colors.primaryDark};
+  }
+
+  &:disabled {
+    background: ${(props) => props.theme.colors.textLight};
+    cursor: not-allowed;
+  }
+
+  svg {
+    margin-right: 0.5rem;
+  }
+`;
+
+const WeatherContainer = styled.div`
+  margin-top: 2rem;
 `;
 
 function App() {
@@ -957,6 +904,7 @@ function App() {
       // Processar previsão para os próximos dias
       const forecastData = (dailyData.time || []).map((date, i) => ({
         date,
+        formattedDate: new Date(date).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' }),
         day: formatDay(date),
         weathercode: dailyData.weathercode?.[i] || 0,
         temp_max: dailyData.temperature_2m_max?.[i] || 0,
@@ -1006,7 +954,8 @@ function App() {
             });
           },
           (error) => {
-            console.error('Erro ao obter localização:', error);
+            console.error('Erro ao obter geolocalização:', error.message);
+            setError('Não foi possível acessar sua localização. Por favor, insira a cidade manualmente.');
           }
         );
       }
@@ -1233,6 +1182,7 @@ function App() {
                       {forecast.map((day, index) => (
                         <ForecastItem key={index}>
                           <div>{day.day}</div>
+                          <div>{day.formattedDate}</div> {/* Exibe a data formatada */}
                           <div>{getWeatherIcon(day.weathercode)}</div>
                           <div>
                             {convertTemp(day.temp_max)}° / {convertTemp(day.temp_min)}°
